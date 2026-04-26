@@ -10,9 +10,6 @@ public class Table {
 
     public Table() {
         rows = new LinkedList<>();
-
-        // En la posición 0 hay una lista vacía
-        rows.addLast(new LinkedList<Card>());
     }
 
     // Añadimos una fila nueva a la mesa
@@ -48,6 +45,68 @@ public class Table {
         }
     }
 
+    public boolean tableGameTurn(int selectedRow, int direction, Player player, int cardPosition){
+        List<Card> used= player.playTypeBird(cardPosition);
+        int insertedCards= used.size();
+        int originalSize=rows.get(selectedRow).size();
+        TypeBird birdSelected= used.getFirst().getTypeBird();
+        int referenceCounter = -1;
+
+        for (int i = 0; i <originalSize; i++) {
+            if (rows.get(selectedRow).get(i).getTypeBird().equals(birdSelected)) {
+                referenceCounter = i;
+                break;
+            }
+        }
+        boolean sandwich = (referenceCounter != -1);
+
+        
+        if (direction==0){
+            while (!used.isEmpty()){
+                rows.get(selectedRow).addFirst(used.removeFirst());
+                
+            }
+            
+            if (sandwich) {
+                int toPick = referenceCounter + insertedCards + 1;
+
+                
+                int rowSize = rows.get(selectedRow).size();
+                toPick = Math.min(toPick, rowSize);
+
+                while (toPick > 0) {
+                    player.addCard(rows.get(selectedRow).removeFirst());
+                    toPick--;
+                }
+            }
+
+        }
+
+        if (direction==1){
+            while (!used.isEmpty()){
+                rows.get(selectedRow).addLast(used.removeFirst());
+            }
+            if (sandwich) {
+                int toPick= (originalSize - referenceCounter) + insertedCards;
+
+                
+                int rowSize = rows.get(selectedRow).size();
+                toPick = Math.min(toPick, rowSize);
+
+                while (toPick > 0) {
+                    player.addCard(rows.get(selectedRow).removeLast());
+                    toPick--;
+                }
+            }
+        }
+
+        
+
+        return player.NoCards();
+        
+        
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -62,5 +121,9 @@ public class Table {
             i++;
         }
         return sb.toString();
+    }
+
+    public void almacen(){
+        
     }
 }

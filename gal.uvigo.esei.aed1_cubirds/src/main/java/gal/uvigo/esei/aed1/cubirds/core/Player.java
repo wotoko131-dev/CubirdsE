@@ -16,7 +16,7 @@ public class Player {
 
     // Añadimos una carta a la mano del jugador
      
-    //CORRECION: modificar para que se coloque donde la especie de pajaro
+    
     public void addCard(Card c) {
         boolean added=false;
         for (int i=0; i<hand.size();i++) {
@@ -37,6 +37,26 @@ public class Player {
         return name;
     }
 
+    //correcto
+    public List<Card> playTypeBird(int cardPosition){
+
+        Card reference= hand.get(cardPosition);
+        List<Card> played= new LinkedList<>();
+        for (int i=0; i<hand.size();i++) {
+            if(hand.get(i).getTypeBird().equals(reference.getTypeBird())){
+                played.addLast(hand.remove(i));
+                i--;
+                
+            }
+        }
+      
+        return played;
+        
+    }
+
+    public boolean NoCards(){
+        return hand.size()==0;
+    }
 
     @Override
     public String toString() {
