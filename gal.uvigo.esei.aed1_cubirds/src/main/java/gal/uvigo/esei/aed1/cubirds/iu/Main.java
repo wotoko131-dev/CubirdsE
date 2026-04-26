@@ -3,7 +3,7 @@ package gal.uvigo.esei.aed1.cubirds.iu;
 
 import gal.uvigo.esei.aed1.cubirds.core.Game;
 
-//comentario para destacar
+
 public class Main {
 
   public static void main(String[] args) {

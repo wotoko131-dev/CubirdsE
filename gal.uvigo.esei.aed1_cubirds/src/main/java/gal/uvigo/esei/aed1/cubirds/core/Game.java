@@ -1,103 +1,75 @@
+
 package gal.uvigo.esei.aed1.cubirds.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-
+import es.uvigo.esei.aed1.tads.list.List;
+import es.uvigo.esei.aed1.tads.list.LinkedList;
 import gal.uvigo.esei.aed1.cubirds.iu.IU;
 
 public class Game {
-    
+
+    private DeckOfCards deck;
+    private List<Player> players;
+    private Table table;
+    private IU iu;
 
     public Game(IU iu) {
-        
-        ArrayList<Player> players = new ArrayList<>();
-
-        int numJugadores;
-
-        // Pedir número válido
-        numJugadores = iu.readNumber("Numero de jugadores (2-5)");
-
-        while (numJugadores < 2 || numJugadores > 5){
-            numJugadores = iu.readNumber("Numero fuera de rango. Vuelve a ingresar numero de jugadores (2-5)");
-        } 
-
-        
-
-        // Crear jugadores
-        for (int i = 0; i < numJugadores; i++) {
-            String nombre = iu.readString("Nombre del jugador "+ (i+1)+ ": ");
-            players.add(new Player(nombre));
-        }
-
-        // Crear la baraja
-        DeckOfCards deck = new DeckOfCards();
-
-        // Barajar
-        Collections.shuffle(deck.getCards());
-
-        // Repartir
-        for (Player p : players) {
-            for (int i = 0; i < 8; i++) {
-                Card carta = deck.getCards().removeFirst();
-                p.getHand().add(carta);
-            }
-        }
-
-        // Ordenar por especie
-        for (Player p : players) {
-            p.getHand().sort((c1, c2) ->
-                c1.getTypeBird().compareTo(c2.getTypeBird())
-            );
-        }
-
-        // Crear mesa
-        Table table = new Table();
-
-        // Crear filas
-        for (int i = 0; i < 4; i++) {
-
-            ArrayList<Card> fila = new ArrayList<>();
-
-            while (fila.size() < 3) {
-
-                Card carta = deck.getCards().removeFirst();
-
-                boolean repetida = false;
-
-                for (Card c : fila) {
-                    if (c.getTypeBird() == carta.getTypeBird()) {
-                        repetida = true;
-                        break;
-                    }
-                }
-
-                if (!repetida) {
-                    fila.add(carta);
-                } else {
-                    deck.getCards().add(carta);
-                }
-            }
-
-            table.getRows().add(fila);
-        }
-
-        // Mostrar jugadores
-        System.out.println("\nJUGADORES:");
-        for (Player p : players) {
-            System.out.println(p.getName() + ": " + p.getHand());
-        }
-
-        // Mostrar mesa
-        System.out.println("\nMESA:");
-        int numFila = 1;
-        for (ArrayList<Card> fila : table.getRows()) {
-            System.out.println("Fila " + numFila + ": " + fila);
-            numFila++;
-        }
-
-        System.out.println("\nCartas restantes: " + deck.getCards().size());
+        this.iu = iu;
+        this.players = new LinkedList<>();
+        this.deck = new DeckOfCards();
+        this.table = new Table();
+    }
+    //Duda: como añadir nuevas funciones al play sin que quede feo
+    
+    public void play() {
+        //fase inicial
+        loadPlayers();
+        deck.shuffle();
+        dealCards();
+        table.createTableRows(deck);
+        showInitialState();
     }
 
-    public void play() {}
+    // Pedimos los jugadores al IU, recorremos la lista y los añadimos al juego
+     
+    private void loadPlayers() {
+        List<Player> inputPlayers = iu.readPlayers();
+
+        for (Player p : inputPlayers) {
+            players.addLast(p);
+        }
+    }
+
+    // Repartimos 8 cartas a cada jugador
+     
+    private void dealCards() {
+        for (Player p : players) {
+            for (int i = 0; i < 8; i++) {
+                p.addCard(deck.drawCard());
+            }
+        }
+    }
+
+
+    // Creamos las 4 filas de la mesa con 3 especies distintas por fila
+    //CORRECCION: llenar la mesa en la clase mesa
+   
+
+    // Mostramos jugadores y mesa tras la inicialización
+     
+    private void showInitialState() {
+        iu.displayMessage("\nJUGADORES:");
+        for (Player p : players) {
+            iu.displayMessage(p.toString());
+        }
+
+        iu.displayMessage("\nMESA:");
+        iu.displayMessage(table.toString());
+    }
+
+    public static void main(String[] args) {
+        IU iu = new IU();
+        Game game = new Game(iu);
+
+        game.play();
+    }
 }

@@ -1,5 +1,9 @@
+
 package gal.uvigo.esei.aed1.cubirds.iu;
 
+import es.uvigo.esei.aed1.tads.list.List;
+import es.uvigo.esei.aed1.tads.list.LinkedList;
+import gal.uvigo.esei.aed1.cubirds.core.Player;
 
 import java.util.Scanner;
 
@@ -11,12 +15,6 @@ public class IU {
         keyboard = new Scanner(System.in);
     }
 
-    /**
-     * Lee un num. de teclado
-     *
-     * @param msg El mensaje a visualizar.
-     * @return El num., como entero
-     */
     public int readNumber(String msg) {
         boolean repeat;
         int toret = 0;
@@ -25,6 +23,7 @@ public class IU {
             repeat = false;
             System.out.print(msg);
             try {
+
                 toret = Integer.parseInt(keyboard.nextLine());
             } catch (NumberFormatException exc) {
                 repeat = true;
@@ -34,28 +33,32 @@ public class IU {
         return toret;
     }
 
-    /**
-     * Lee un string de teclado
-     *
-     * @param msg mensaje a mostrar antes de la lectura
-     * @return el string leido
-     */
     public String readString(String msg) {
-        String toret;
         System.out.print(msg);
-        toret = keyboard.nextLine();
-        return toret;
+        return keyboard.nextLine();
     }
 
-    /**
-     * muestra un mensaje por pantalla
-     *
-     * @param msg el mensaje a mostrar
-     */
     public void displayMessage(String msg) {
         System.out.println(msg);
     }
 
-    
+    // Pedimos un número válido de jugadores (2-5),
+    // Pedimos los nombres y creamos la lista de jugadores
+     
+    public List<Player> readPlayers() {
+        List<Player> players = new LinkedList<>();
 
+        int numPlayers;
+
+        do {
+            numPlayers = readNumber("Número de jugadores (2-5): ");
+        } while (numPlayers < 2 || numPlayers > 5);
+
+        for (int i = 0; i < numPlayers; i++) {
+            String name = readString("Nombre del jugador " + (i + 1) + ": ");
+            players.addLast(new Player(name));
+        }
+
+        return players;
+    }
 }
