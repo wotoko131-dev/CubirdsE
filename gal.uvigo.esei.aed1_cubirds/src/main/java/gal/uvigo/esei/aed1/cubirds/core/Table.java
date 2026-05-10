@@ -45,18 +45,20 @@ public class Table {
         }
     }
 
-    public boolean tableGameTurn(int selectedRow, int direction, Player player, int cardPosition){
+    public List<Card> tableGameTurn(int selectedRow, int direction, Player player, int cardPosition){
         List<Card> used= player.playTypeBird(cardPosition);
+        List<Card> devolverJugador= new LinkedList<>();
         int insertedCards= used.size();
         int originalSize=rows.get(selectedRow).size();
         TypeBird birdSelected= used.getFirst().getTypeBird();
         int referenceCounter = -1;
 
-        for (int i = 0; i <originalSize; i++) {
+        int i=0;
+        while (referenceCounter==-1 && i<rows.get(selectedRow).size()) {
             if (rows.get(selectedRow).get(i).getTypeBird().equals(birdSelected)) {
                 referenceCounter = i;
-                break;
             }
+            i++;
         }
         boolean sandwich = (referenceCounter != -1);
 
@@ -68,16 +70,14 @@ public class Table {
             }
             
             if (sandwich) {
-                int toPick = referenceCounter + insertedCards + 1;
-
                 
-                int rowSize = rows.get(selectedRow).size();
-                toPick = Math.min(toPick, rowSize);
+                int toPick = referenceCounter;
+                
 
-                while (toPick > 0) {
-                    player.addCard(rows.get(selectedRow).removeFirst());
-                    toPick--;
+                for (i = 0; i < toPick; i++) {
+                    devolverJugador.addLast(rows.get(selectedRow).remove(insertedCards)); // siempre después del grupo nuevo
                 }
+
             }
 
         }
@@ -87,22 +87,17 @@ public class Table {
                 rows.get(selectedRow).addLast(used.removeFirst());
             }
             if (sandwich) {
-                int toPick= (originalSize - referenceCounter) + insertedCards;
-
                 
-                int rowSize = rows.get(selectedRow).size();
-                toPick = Math.min(toPick, rowSize);
-
-                while (toPick > 0) {
-                    player.addCard(rows.get(selectedRow).removeLast());
-                    toPick--;
+                int toPick = originalSize - referenceCounter - 1;
+                
+                for (i = 0; i < toPick; i++) {
+                    devolverJugador.addLast(rows.get(selectedRow).remove(referenceCounter + 1));
                 }
+
             }
         }
 
-        
-
-        return player.NoCards();
+        return devolverJugador;
         
         
     }

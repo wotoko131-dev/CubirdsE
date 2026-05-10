@@ -5,7 +5,7 @@ import es.uvigo.esei.aed1.tads.list.List;
 import es.uvigo.esei.aed1.tads.list.LinkedList;
 
 public class Player {
-
+    
     private String name;
     private List<Card> hand;
 
@@ -18,23 +18,40 @@ public class Player {
      
     
     public void addCard(Card c) {
+        int i=0;
         boolean added=false;
-        for (int i=0; i<hand.size();i++) {
+        while(i<hand.size() && added==false) {
 
-            if ((hand.get(i).getTypeBird()).equals(c.getTypeBird())) {
-                hand.add(i, c);
-                added=true;
-            }
-            if (added==true){break;}
-           
-        }
+            if ((hand.get(i).getTypeBird()).equals(c.getTypeBird())) {hand.add(i, c); added=true;}
+            i++;
+            
+        }    
         if (added==false){hand.addLast(c);}
+        
+    }
+
+    public void addCard(List<Card> lc) {
+        boolean added=false;
+        int i=0;
+        for (Card c : lc) {
+            while(i<hand.size() && added==false) {
+
+                if ((hand.get(i).getTypeBird()).equals(c.getTypeBird())) {hand.add(i, c); added=true;}
+                i++;
+            
+            }
+            if (added==false){hand.addLast(c);}
+        }    
         
     }
 
     // Devolvemos el nombre del jugador
     public String getName() {
         return name;
+    }
+
+    public int getNumCartasMano(){
+        return this.hand.size();
     }
 
     //correcto

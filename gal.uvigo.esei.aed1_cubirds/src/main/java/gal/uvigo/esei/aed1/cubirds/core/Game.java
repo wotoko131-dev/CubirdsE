@@ -28,10 +28,6 @@ public class Game {
         table.createTableRows(deck);
         showState();
 
-
-        
-        
-
         //fase de juego
         gameTurns();
     }
@@ -50,7 +46,7 @@ public class Game {
      
     private void dealCards() {
         for (Player p : players) {
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i <= 7; i++) {
                 p.addCard(deck.drawCard());
             }
         }
@@ -73,53 +69,32 @@ public class Game {
         iu.displayMessage(table.toString());
     }
 
+
+    //Turnos de juego (se acaba cuando un jugador no tiene cartas)
     private void gameTurns(){
         boolean fin=false;
+        List<Card> devolverJugador= null;
         while (fin==false) {
         
             for (Player player : players) {
-                iu.displayMessage("Turno de "+ player.getName());
-                int cardPosition= iu.readNumber("Elige que carta quieres jugar (jugaras todas las de la misma especie)");
-                cardPosition--;
+                int cardPosition=iu.seleccionarCarta(player);
+                int selectedRow=iu.seleccionarRow();
+                int sideRow=iu.seleccionarLado();
 
-                int selectedRow=iu.readNumber("Seleccione fila para colocar");
-                while (selectedRow>4||selectedRow<1){
-                    System.out.println("Solo hay filas 1-4");
-                    selectedRow=iu.readNumber("Seleccione fila para colocar");
-                }
-                selectedRow--;
+                devolverJugador=table.tableGameTurn(selectedRow, sideRow, player, cardPosition);
+                player.addCard(devolverJugador);
+                devolverJugador.clear();
 
-                int sideRow=iu.readNumber("Seleccione 0 para izquierda, 1 para derecha");
-                while (sideRow!= 0 && sideRow!=1){
-                    System.out.println("Solo 0 para izquierda, 1 para derecha");
-                    selectedRow=iu.readNumber("Seleccione fila para colocar");
-                    sideRow=iu.readNumber("Seleccione 0 para izquierda, 1 para derecha");
-                }
+                fin=player.NoCards();
+                if (fin){iu.displayMessage("El jugador " + player.getName()+ " se quedo sin cartas");}
 
-                
-
-                fin=table.tableGameTurn(selectedRow, sideRow, player, cardPosition);
-                
-                
-                if (fin){
-                    iu.displayMessage("El jugador " + player.getName()+ " se quedo sin cartas");
-                    break;
-                }
-
-                showState();
-
-                
+                else{showState();}
                 
             }
         }
-        iu.displayMessage("Un jugador se quedo si cartas. FIN");
+        iu.displayMessage("Un jugador se quedo sin cartas. FIN");
 
     }
 
-    public static void main(String[] args) {
-        IU iu = new IU();
-        Game game = new Game(iu);
-
-        game.play();
-    }
+    
 }
